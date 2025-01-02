@@ -1,0 +1,26 @@
+name: Attach Zip to Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  create-zip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create zip file
+        run: |
+          mkdir -p release
+          zip -r release/kriti-theme.zip kriti-theme
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: release/kriti-theme.zip
+          asset_name: kriti-theme.zip
+          asset_content_type: application/zip
