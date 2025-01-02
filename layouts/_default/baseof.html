@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head prefix="og: http://ogp.me/ns#{{ if .IsPage }} article: https://ogp.me/ns/article#{{ end }}">
+    {{ partialCached "meta/favicon.html" . }}
+    {{ partial "meta/meta.html" . }}
+    {{ partial "meta/og/og.html" . }}
+    {{ partial "meta/og/twitter.html" . }}
+    {{ block "styles" .}}{{- end -}}
+    {{ block "scripts" .}}{{- end -}}
+	</head>
+  {{ block "body" . }}{{- end -}}
+</html>

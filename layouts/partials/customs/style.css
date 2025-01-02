@@ -1,0 +1,8 @@
+{{- $fs := (cond .IsPage .Params .Site.Params).styles.custom -}}
+{{- with $fs -}}
+  {{- range . -}}
+    {{- $s := resources.Get (printf "**/styles/%s" .) -}}
+    {{- $s = $s | minify | fingerprint -}}
+    <link href="{{ $s.RelPermalink }}" rel="stylesheet" integrity="{{ $s.Data.Integrity }}" />
+  {{- end -}}
+{{- end -}}

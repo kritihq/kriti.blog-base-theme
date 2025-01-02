@@ -1,0 +1,47 @@
+{{- with default .Title (cond .IsPage .Params .Site.Params).twitter.title -}}
+  <meta name="twitter:title" content="{{ . }}">
+{{- end -}}
+
+{{- with default (cond .IsPage .Description .Site.Params.Description) (cond .IsPage .Params .Site.Params).twitter.description -}}
+  <meta name="twitter:description" content="{{ . }}">
+{{- end -}}
+
+{{- with default .Site.Params.twitter.site .Params.twitter.site -}}
+  <meta name="twitter:site" content="{{ . }}">
+{{- end -}}
+{{- with default .Site.Params.twitter.site_id .Params.twitter.site_id -}}
+  <meta name="twitter:site:id" content="{{ . }}">
+{{- end -}}
+
+{{- /* OG image, if params.twitter.image is present use that and ignore everything */ -}}
+{{- /* Else look for either `og` or `cover` named images and use them */ -}}
+{{- with (cond .IsPage .Params .Site.Params).twitter.image.url -}}
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:image" content="{{ . }}">
+{{- else -}}
+  {{- with ((cond .IsPage .Resources resources).ByType "image").GetMatch "**/og.*" -}}
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta name="twitter:image" content="{{- .Permalink -}}">
+  {{- else -}}
+    <meta name="twitter:card" content="summary"/>
+  {{- end -}}
+{{- end -}}
+{{- with default .Title (cond .IsPage .Params .Site.Params).twitter.image.alt -}}
+  <meta name="twitter:image:alt" content="{{ . }}">
+{{- end -}}
+
+{{- with (cond .IsPage .Params .Site.Params).twitter.creator.username -}}
+  <meta name="twitter:creator" content="{{ . }}">
+{{- else -}}
+  {{- with default .Site.Params.authors .Params.authors }}
+    {{- $author_type := (printf "%T" .) }}
+    {{- if eq $author_type "[]interface {}" -}}
+      {{- with index . 0 "socials" "x" -}}
+        <meta name="twitter:creator" content="{{ . }}">
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- with default .Site.Params.twitter.creator.id .Params.twitter.creator.id -}}
+  <meta name="twitter:creator:id" content="{{ . }}">
+{{- end -}}

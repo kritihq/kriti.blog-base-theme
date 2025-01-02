@@ -1,0 +1,117 @@
+{{- with default .Title (cond .IsPage .Params .Site.Params).og.title -}}
+  <meta property="og:title" content="{{ . }}">
+{{- end -}}
+
+{{- with default (cond .IsPage .Description .Site.Params.Description) (cond .IsPage .Params .Site.Params).og.description -}}
+  <meta property="og:description" content="{{ . }}">
+{{- end -}}
+
+{{- with default .Permalink (cond .IsPage .Params .Site.Params).og.url -}}
+  <meta property="og:url" content="{{ . }}">
+{{- end -}}
+
+{{- with default (cond .IsPage "article" "website") (cond .IsPage .Params .Site.Params).og.type -}}
+  <meta property="og:type" content="{{ . }}">
+{{- end -}}
+
+{{- with default .Site.Params.og.determiner .Params.og.determiner -}}
+  <meta property="og:determiner" content="{{ . }}">
+{{- end -}}
+
+{{- with default "en_US" (default .Site.Language.LanguageCode (cond .IsPage .Params .Site.Params).og.locale) -}}
+  <meta property="og:locale" content="{{ . }}">
+{{- end -}}
+
+{{- with (cond .IsPage .Params .Site.Params).og.locale_alternate -}}
+  <meta property="og:locale:alternate" content="{{ . }}">
+{{- end -}}
+
+{{- with default .Site.Title .Params.og.site_name -}}
+  <meta property="og:site_name" content="{{ . }}">
+{{- end -}}
+
+{{- /* OG image, if params.og.image.url is present use that and ignore everything */ -}}
+{{- /* Else look for either `og` or `cover` named images and use them */ -}}
+{{- if (cond .IsPage .Params .Site.Params).og.image.url -}}
+  {{- range $k, $v := (cond .IsPage .Params .Site.Params).og.image -}}
+    <meta property="og:image:{{ $k }}" content="{{ $v }}">
+  {{- end -}}
+{{- else -}}
+  {{- with ((cond .IsPage .Resources resources).ByType "image").GetMatch "**/og.*" -}}
+    <meta property="og:image" content="{{- .Permalink -}}">
+    <meta property="og:image:alt" content="{{ default $.Title $.Params.og.image.alt }}">
+    <meta property="og:image:url" content="{{- .Permalink -}}">
+    <meta property="og:image:width" content="{{- .Width -}}">
+    <meta property="og:image:height" content="{{- .Height -}}">
+    <meta property="og:image:type" content="{{- .MediaType.Type -}}">
+  {{- end -}}
+{{- end -}}
+
+{{- /* Same logic for video */ -}}
+{{- with (cond .IsPage .Params .Site.Params).og.video -}}
+  {{- range $k, $v := . -}}
+    <meta property="$k" content="$v">
+  {{- end -}}
+{{- else -}}
+  {{- with ((cond .IsPage .Resources resources).ByType "video").GetMatch "og.*" -}}
+    <meta property="og:video" content="{{- .Permalink -}}">
+    <meta property="og:video:width" content="{{- .Width -}}">
+    <meta property="og:video:height" content="{{- .Height -}}">
+    <meta property="og:video:type" content="{{- .MediaType.Type -}}">
+  {{- end -}}
+{{- end -}}
+
+{{- /* Same logic for audio */ -}}
+{{- with (cond .IsPage .Params .Site.Params).og.audio -}}
+  {{- range $k, $v := . -}}
+    <meta property="$k" content="$v">
+  {{- end -}}
+{{- else -}}
+  {{- with ((cond .IsPage .Resources resources).ByType "audio").GetMatch "og.*" -}}
+    <meta property="og:audio" content="{{- .Permalink -}}">
+    <meta property="og:audio:type" content="{{- .MediaType.Type -}}">
+  {{- end -}}
+{{- end -}}
+
+{{- if .IsPage }}
+  {{- with default .Section .Params.og.article.section -}}
+    <meta property="article:section" content="{{ . }}">
+  {{- end -}}
+  
+  {{- $iso8601 := "2006-01-02T15:04:05-07:00" -}}
+  {{- with default .PublishDate .Params.og.article.publish_date -}}
+    <meta property="article:published_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }}>
+  {{- end -}}
+  
+  {{- with default .Lastmod .Params.og.article.modified_date -}}
+    <meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }}>
+  {{- end -}}
+
+  {{- with default .Keywords .Params.og.article.keywords -}}
+    {{- range $i, $word := . -}}
+      <meta property="article:tag" content="{{ $word }}">
+    {{- end -}}
+  {{ end -}}
+
+  {{- with (cond .IsPage .Params .Site.Params).og.article.authors -}}
+    {{- $author_type := (printf "%T" .) }}
+    {{- if eq $author_type "string" -}}
+      <meta property="article:author" content="{{ . }}">
+    {{- else if eq $author_type "[]interface {}" -}}
+      {{ range $i, $v := . }}
+        <meta property="article:author" content="{{ $v }}">
+      {{ end }}
+    {{- end -}}
+  {{- else -}}
+    {{- with default .Site.Params.authors .Params.authors }}
+      {{- $author_type := (printf "%T" .) }}
+      {{- if eq $author_type "string" -}}
+        <meta property="article:author" content="{{ . }}">
+      {{- else if eq $author_type "[]interface {}" -}}
+        {{ range $i, $a := . }}
+          <meta property="article:author" content="{{ index $a "name" }}">
+        {{ end }}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

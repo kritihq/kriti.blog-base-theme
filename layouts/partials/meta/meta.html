@@ -1,0 +1,45 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ if .IsHome }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{ . }} | {{ end }}{{ .Site.Title }}{{ end }}</title>
+<meta name="description" content="{{ with .Description }}{{ . }}{{ else }}{{ with .Site.Params.description }}{{ . }}{{ end }}{{ end }}">
+{{- with default .Permalink .Params.canonicalURL -}}
+  <link rel="canonical" href="{{ . }}">
+{{- end -}}
+{{- with .Keywords -}}
+  <meta name="keywords" content="{{ delimit . ", " }}">
+{{- end -}}
+
+{{- with default .Site.Params.authors .Params.authors }}
+  {{- $author_type := (printf "%T" .) }}
+  {{- if eq $author_type "string" -}}
+    <meta name="author" content="{{ . }}">
+  {{- else if (or (eq $author_type "[]string") (eq $author_type "[]interface {}")) -}}
+    <meta name="author" content="
+    {{- range $i, $a := . -}}
+      {{- if gt $i  0 -}}, {{ end }} {{ index $a "name" -}}
+    {{- end -}}">
+  {{- end -}}
+{{- end -}}
+
+{{- with default .Site.Params.copyright .Params.copyright -}}
+  <meta name="copyright" content="{{ . }}">
+{{- end -}}
+
+{{- if default .Site.Params.rating .Params.rating -}}
+  <meta name="rating" content="{{ . }}">
+{{- end -}}
+
+{{- $crawlers := merge (default (dict "" "") .Site.Params.crawlers) (default (dict "" "") .Params.crawlers) -}}
+{{- range $name, $content := $crawlers -}}
+  {{- with (trim $content "") }}
+    <meta name="{{ $name }}" content="{{ $content }}">
+  {{- end -}}
+{{- end -}}
+
+{{- $metas := merge (default (dict "" "") .Site.Params.meta.extras) (default (dict "" "") .Params.meta.extras) -}}
+{{- range $name, $content := $metas -}}
+  {{- with (trim $content "") }}
+    <meta name="{{ $name }}" content="{{ $content }}">
+  {{- end -}}
+{{- end -}}
