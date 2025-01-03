@@ -5,8 +5,8 @@
     {{ partial "meta/meta.html" . }}
     {{ partial "meta/og/og.html" . }}
     {{ partial "meta/og/twitter.html" . }}
-    {{ block "styles" .}}{{- end -}}
-    {{ block "scripts" .}}{{- end -}}
+    {{ block "styles" . }}{{- end -}}
+    {{ block "scripts" . }}{{- end -}}
 	</head>
   {{ block "body" . }}{{- end -}}
 </html>
