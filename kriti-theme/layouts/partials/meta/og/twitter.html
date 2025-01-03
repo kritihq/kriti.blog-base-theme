@@ -19,15 +19,15 @@
   <meta name="twitter:card" content="summary_large_image"/>
   <meta name="twitter:image" content="{{ . }}">
 {{- else -}}
-  {{- with ((cond .IsPage .Resources resources).ByType "image").GetMatch "**/og.*" -}}
+  {{- with default ((resources.ByType "image").GetMatch "{**/og.*,og.*}") ((.Resources.ByType "image").GetMatch "{**/og.*,og.*}") -}}
     <meta name="twitter:card" content="summary_large_image"/>
     <meta name="twitter:image" content="{{- .Permalink -}}">
+    {{- with default $.Title (default $.Params.twitter.image.alt $.Site.Params.twitter.image.alt) -}}
+      <meta name="twitter:image:alt" content="{{ . }}">
+    {{- end -}}
   {{- else -}}
     <meta name="twitter:card" content="summary"/>
   {{- end -}}
-{{- end -}}
-{{- with default .Title (cond .IsPage .Params .Site.Params).twitter.image.alt -}}
-  <meta name="twitter:image:alt" content="{{ . }}">
 {{- end -}}
 
 {{- with (cond .IsPage .Params .Site.Params).twitter.creator.username -}}

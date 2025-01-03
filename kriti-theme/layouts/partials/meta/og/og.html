@@ -37,8 +37,11 @@
     <meta property="og:image:{{ $k }}" content="{{ $v }}">
   {{- end -}}
 {{- else -}}
-  {{- with ((cond .IsPage .Resources resources).ByType "image").GetMatch "**/og.*" -}}
+  {{- with default ((resources.ByType "image").GetMatch "{**/og.*,og.*}") ((.Resources.ByType "image").GetMatch "{**/og.*,og.*}") -}}
     <meta property="og:image" content="{{- .Permalink -}}">
+    {{- with default $.Title (default $.Params.og.image.alt $.Site.Params.og.image.alt) -}}
+      <meta property="og:image:alt" content="{{ . }}">
+    {{- end -}}
     <meta property="og:image:alt" content="{{ default $.Title $.Params.og.image.alt }}">
     <meta property="og:image:url" content="{{- .Permalink -}}">
     <meta property="og:image:width" content="{{- .Width -}}">
