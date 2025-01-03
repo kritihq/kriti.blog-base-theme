@@ -87,7 +87,7 @@
     <meta property="article:modified_time" {{ .Format $iso8601 | printf "content=%q" | safeHTMLAttr }}>
   {{- end -}}
 
-  {{- with default .Keywords .Params.og.article.keywords -}}
+  {{- with default .Keywords .Params.og.article.tags -}}
     {{- range $i, $word := . -}}
       <meta property="article:tag" content="{{ $word }}">
     {{- end -}}
