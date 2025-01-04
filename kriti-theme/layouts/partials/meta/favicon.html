@@ -1,7 +1,3 @@
-{{- range resources -}}
-<meta name="kriti:resources" content="{{ .Name }}">
-{{- end -}}
-
 {{- with resources.Get "**/favicon.ico" -}}
   <link rel="shortcut icon" href="{{ .RelPermalink | relURL }}" />
 {{- end -}}
