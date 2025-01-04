@@ -1,12 +1,12 @@
-{{- with resources.Get "**/favicon.ico" -}}
+{{- with resources.GetMatch "**/favicon.ico" -}}
   <link rel="shortcut icon" href="{{ .RelPermalink | relURL }}" />
 {{- end -}}
 
-{{- with resources.Get "**/favicon.svg" -}}
+{{- with resources.GetMatch "**/favicon.svg" -}}
   <link rel="icon" type="image/svg+xml" href="{{ .RelPermalink | relURL }}" />
 {{- end -}}
 
-{{- with resources.Get "**/apple-touch-icon.png" -}}
+{{- with resources.GetMatch "**/apple-touch-icon.png" -}}
   <link rel="apple-touch-icon" sizes="{{ .Height }}x{{ .Width }}" href="{{ .RelPermalink | relURL }}" />
 {{- else -}}
   {{- with (resources.ByType "image").GetMatch "**/favicon.{jpeg|jpg|png}" -}}
@@ -16,7 +16,7 @@
   {{- end -}}
 {{- end -}}
 
-{{- with resources.Get "**/favicon-96x96.png" -}}
+{{- with resources.GetMatch "**/favicon-96x96.png" -}}
   <link rel="icon" type="{{ .MediaType.Type }}" sizes="96x96" href="{{ .RelPermalink | relURL }}" />
 {{- else -}}
   {{- with (resources.ByType "image").GetMatch "**/favicon.{jpeg|jpg|png}" -}}
@@ -26,6 +26,6 @@
   {{- end -}}
 {{- end -}}
 
-{{- with resources.Get "**/site.webmanifest" }}
+{{- with resources.GetMatch "**/site.webmanifest" }}
   <link rel="manifest" href="{{ .RelPermalink | relURL}}" />
 {{- end -}}
